@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Pin</title>
+    <link rel="stylesheet" href="{% static 'core/css/style.css' %}">
+</head>
+<body>
+
+<h2>Edit Pin</h2>
+
+<form method="POST">
+    {% csrf_token %}
+    <input type="text" name="title" value="{{ pin.title }}">
+    <textarea name="description">{{ pin.description }}</textarea>
+    <button type="submit">Save Changes</button>
+</form>
+
+<br>
+<a href="{% url 'pin_detail' pin.id %}">← Cancel</a>
+
+</body>
+</html>

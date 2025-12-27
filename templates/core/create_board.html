@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Board</title>
+    <link rel="stylesheet" href="{% static 'core/css/style.css' %}">
+</head>
+<body>
+
+<div class="auth-container">
+    <h2>Create Board</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        <input type="text" name="name" placeholder="Board name">
+        <button type="submit">Create</button>
+    </form>
+
+    <a class="auth-link" href="{% url 'home' %}">Back to boards</a>
+</div>
+
+</body>
+</html>

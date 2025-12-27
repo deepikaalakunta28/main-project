@@ -1,0 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Add Pin</title>
+    <link rel="stylesheet" href="{% static 'core/css/style.css' %}">
+</head>
+
+<body>
+
+    <div class="auth-container">
+        <h2>Add Pin to {{ board.name }}</h2>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="text" name="title" placeholder="Pin title">
+
+            <textarea name="description" placeholder="Enter description"></textarea>
+
+            <input type="file" name="image">
+
+            <button type="submit">Save Pin</button>
+        </form>
+
+
+        <!-- <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="text" name="title" placeholder="Pin title">
+        <input type="file" name="image">
+        <button type="submit">Save Pin</button>
+    </form> -->
+
+        <a class="auth-link" href="{% url 'board_detail' board.id %}">Back to board</a>
+    </div>
+
+</body>
+
+</html>

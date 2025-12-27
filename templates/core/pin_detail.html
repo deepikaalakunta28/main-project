@@ -1,0 +1,219 @@
+<!-- <h1>{{ pin.title }}</h1>
+
+<img src="{{ pin.image.url }}" style="width:350px; border-radius:10px;">
+<br>
+
+<p>{{ pin.description }}</p>
+<p><strong>Likes:</strong> {{ like_count }}</p>
+<form method="POST" action="{% url 'toggle_like' pin.id %}">
+    {% csrf_token %}
+
+    {% if is_liked %}
+        <button type="submit"> Unlike</button>
+    {% else %}
+        <button type="submit"> Like</button>
+    {% endif %}
+</form>
+
+<br>
+<hr>
+
+<h3> Comments </h3>
+
+<form method="POST">
+    {% csrf_token %}
+    <textarea name="comment_text" placeholder="Write a comment..." required></textarea><br>
+    <button type="submit">➕ Add Comment</button>
+</form>
+
+<br>
+
+<div class="comments">
+{% for comment in comments %}
+    <p>
+        <strong>{{ comment.user.username }}:</strong>
+        {{ comment.text }}
+        <br>
+        <small>{{ comment.created_at }}</small>
+
+        {% if comment.user == request.user %}
+            <a href="{% url 'delete_comment' comment.id %}" style="color:red;">
+                🗑 Delete
+            </a>
+        {% endif %}
+    </p>
+    <hr>
+{% empty %}
+    <p>No comments yet.</p>
+{% endfor %}
+</div>
+
+<br>
+
+
+{% if request.user.is_authenticated %}
+<form method="POST" action="{% url 'save_pin' pin.id %}">
+    {% csrf_token %}
+
+    <label>Select Board:</label>
+    <select name="board_id" required>
+        {% for board in request.user.board_set.all %}
+        <option value="{{ board.id }}">{{ board.name }}</option>
+        {% empty %}
+        <option disabled>No boards found — create one</option>
+        {% endfor %}
+    </select>
+
+    <button type="submit"> Save Pin</button>
+</form>
+{% endif %}
+<br>
+{% if is_owner %}
+<a href="{% url 'edit_pin' pin.id %}"> Edit Pin</a>
+&nbsp;&nbsp;
+<a href="{% url 'delete_pin' pin.id %}" style="color:red;">🗑 Delete</a>
+{% endif %}
+<! <a href="{% url 'edit_pin' pin.id %}"> Edit Pin</a>
+&nbsp;&nbsp;
+<a href="{% url 'delete_pin' pin.id %}" style="color:red;">🗑 Delete</a>
+&nbsp;&nbsp; -->
+<!-- <a href="{{ pin.image.url }}" download>⬇ Download</a>
+
+<br><br>
+
+<a href="{% url 'board_detail' pin.board.id %}">← Back to Board</a> --> 
+
+
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ pin.title }}</title>
+    <link rel="stylesheet" href="{% static 'core/css/style.css' %}">
+</head>
+
+<body>
+
+<h1>{{ pin.title }}</h1>
+
+<img src="{{ pin.image.url }}" style="width:350px; border-radius:10px;">
+<br>
+
+<p>{{ pin.description }}</p>
+
+
+<!-- LIKE SYSTEM -->
+<p><strong>Likes:</strong> {{ like_count }}</p>
+
+<form method="POST" action="{% url 'toggle_like' pin.id %}">
+    {% csrf_token %}
+    {% if is_liked %}
+        <button type="submit">💔 Unlike</button>
+    {% else %}
+        <button type="submit">❤️ Like</button>
+    {% endif %}
+</form>
+{% if likes_list %}
+<p><strong>Liked by:</strong></p>
+<ul>
+    {% for like in likes_list %}
+        <li>{{ like.user.username }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<br>
+<hr>
+
+
+<!-- COMMENTS SECTION -->
+<h3>💬 Comments ({{ comments.count }})</h3>
+
+<form method="POST" action="{% url 'add_comment' pin.id %}">
+    {% csrf_token %}
+    <textarea name="comment_text" placeholder="Write a comment..." required></textarea><br>
+    <button type="submit">➕ Add Comment</button>
+</form>
+
+<br>
+
+{% for comment in comments %}
+<div style="margin-bottom:15px;">
+    <strong>{{ comment.user.username }}</strong>: {{ comment.text }}<br>
+    <small>{{ comment.created_at }}</small>
+
+    {% if comment.user == request.user %}
+        <a href="{% url 'delete_comment' comment.id %}" style="color:red;">
+            🗑 Delete
+        </a>
+    {% endif %}
+
+    <!-- REPLY FORM -->
+    <form method="POST" action="{% url 'add_comment' pin.id %}" style="margin-top:5px;">
+        {% csrf_token %}
+        <input type="hidden" name="parent_id" value="{{ comment.id }}">
+        <input type="text" name="comment_text" placeholder="Reply..." required>
+        <button type="submit">↩ Reply</button>
+    </form>
+
+    <!-- SHOW REPLIES -->
+    {% for reply in comment.replies.all %}
+        <div style="margin-left:30px; border-left:1px solid #ccc; padding-left:10px; margin-top:5px;">
+            <strong>{{ reply.user.username }}</strong>: {{ reply.text }}<br>
+            <small>{{ reply.created_at }}</small>
+
+            {% if reply.user == request.user %}
+                <a href="{% url 'delete_comment' reply.id %}" style="color:red;">
+                    🗑 Delete
+                </a>
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>
+<hr>
+{% empty %}
+<p>No comments yet.</p>
+{% endfor %}
+
+<br><hr>
+
+
+<!-- SAVE PIN TO BOARD -->
+{% if request.user.is_authenticated %}
+<form method="POST" action="{% url 'save_pin' pin.id %}">
+    {% csrf_token %}
+
+    <label>Select Board:</label>
+    <select name="board_id" required>
+        {% for board in request.user.board_set.all %}
+            <option value="{{ board.id }}">{{ board.name }}</option>
+        {% empty %}
+            <option disabled>No boards found — create one</option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">📌 Save Pin</button>
+</form>
+{% endif %}
+
+<br>
+
+
+<!-- OWNER ACTIONS -->
+{% if is_owner %}
+<a href="{% url 'edit_pin' pin.id %}">✏️ Edit Pin</a>
+&nbsp;&nbsp;
+<a href="{% url 'delete_pin' pin.id %}" style="color:red;">🗑 Delete</a>
+{% endif %}
+
+&nbsp;&nbsp;
+<a href="{{ pin.image.url }}" download>⬇️ Download</a>
+
+<br><br>
+
+
+<!-- BACK -->
+<a href="{% url 'board_detail' pin.board.id %}">← Back to Board</a>
+
+</body>
+</html>

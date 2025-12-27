@@ -1,0 +1,60 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>{{ profile_user.username }}'s Profile</title>
+    <link rel="stylesheet" href="{% static 'core/css/style.css' %}">
+</head>
+
+<body>
+
+    <h1>👤 {{ profile_user.username }}</h1>
+    {% if request.user != profile_user %}
+
+    <form method="POST" action="{% url 'toggle_follow' profile_user.username %}">
+        {% csrf_token %}
+        <button type="submit">
+            {% if is_following %}
+            ❌ Unfollow
+            {% else %}
+            ➕ Follow
+            {% endif %}
+        </button>
+    </form>
+
+    {% endif %}
+    <br>
+    <h2>Boards</h2>
+    <div class="board-grid">
+        {% for board in boards %}
+        <div class="board-card">
+            <a href="{% url 'board_detail' board.id %}">
+                {{ board.name }}
+            </a>
+        </div>
+        {% empty %}
+        <p>No boards yet</p>
+        {% endfor %}
+    </div>
+
+    <h2>Pins</h2>
+    <div class="pin-grid">
+        {% for pin in pins %}
+        <div class="pin-card">
+            <a href="{% url 'pin_detail' pin.id %}">
+                <img src="{{ pin.image.url }}">
+            </a>
+            <p>{{ pin.title }}</p>
+        </div>
+        {% empty %}
+        <p>No pins yet</p>
+        {% endfor %}
+    </div>
+
+    <br>
+    <a href="{% url 'home' %}">← Back</a>
+
+</body>
+
+</html>

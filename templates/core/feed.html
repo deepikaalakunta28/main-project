@@ -1,0 +1,29 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Explore Feed</title>
+    <link rel="stylesheet" href="{% static 'core/css/style.css' %}">
+</head>
+<body>
+
+<h1>🧭 Explore Feed</h1>
+
+<div class="pin-grid">
+    {% for pin in pins %}
+    <div class="pin-card">
+        <a href="{% url 'pin_detail' pin.id %}">
+            <img src="{{ pin.image.url }}">
+        </a>
+        <p>{{ pin.title }}</p>
+    </div>
+    {% empty %}
+        <p>No pins available</p>
+    {% endfor %}
+</div>
+
+<br>
+<a href="{% url 'home' %}">← Back to Boards</a>
+
+</body>
+</html>
