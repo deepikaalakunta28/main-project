@@ -9,9 +9,10 @@
 
 <h1>🧭 Explore Feed</h1>
 
-<div class="pin-grid">
+<!-- Masonry Layout -->
+<div class="masonry">
     {% for pin in pins %}
-    <div class="pin-card">
+    <div class="masonry-item">
         <a href="{% url 'pin_detail' pin.id %}">
             <img src="{{ pin.image.url }}">
         </a>
@@ -24,6 +25,5 @@
 
 <br>
 <a href="{% url 'home' %}">← Back to Boards</a>
-
 </body>
 </html>

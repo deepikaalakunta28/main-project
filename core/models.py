@@ -34,11 +34,16 @@ class Pin(models.Model):
 from django.contrib.auth.models import User
 
 class Follow(models.Model):
-    follower = models.ForeignKey(User, related_name="following", on_delete=models.CASCADE)
-    following = models.ForeignKey(User, related_name="followers", on_delete=models.CASCADE)
+    follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name="following")
+    following = models.ForeignKey(User, on_delete=models.CASCADE, related_name="followers")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('follower', 'following')
 
     def __str__(self):
         return f"{self.follower} → {self.following}"
+
 
 class SavedPin(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -81,3 +86,45 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"{self.user.username} — {self.text[:20]}"
+
+
+from django.contrib.auth.models import User
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    profile_image = models.ImageField(
+        upload_to='profiles/',
+        blank=True,
+        null=True
+    )
+
+    bio = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.user.username
+
+
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+@receiver(post_save, sender=User)
+def create_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+
+
+
+
+
+class BoardFollow(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    board = models.ForeignKey(Board, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'board')
+
+    def __str__(self):
+        return f"{self.user} follows {self.board}"

@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Following</title>
+    <link rel="stylesheet" href="{% static 'core/css/style.css' %}">
+</head>
+
+<body>
+
+<h1>➡️ Following — {{ profile_user.username }}</h1>
+
+{% if following %}
+<ul>
+    {% for follow in following %}
+        <li>
+            <strong>{{ follow.following.username }}</strong>
+
+            {% if request.user != follow.following %}
+                <form method="POST" action="{% url 'toggle_follow' follow.following.username %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit">❌ Unfollow</button>
+                </form>
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>Not following anyone yet.</p>
+{% endif %}
+
+<br>
+<a href="{% url 'profile' %}">← Back to Profile</a>
+
+</body>
+</html>

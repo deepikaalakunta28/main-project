@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search</title>
+    <link rel="stylesheet" href="{% static 'core/css/style.css' %}">
+</head>
+
+<body>
+
+<h2>🔎 Search Results for: "{{ query }}"</h2>
+
+<h3>Boards</h3>
+<div class="board-grid">
+{% for board in boards %}
+    <div class="board-card">
+        <a href="{% url 'board_detail' board.id %}">
+            {{ board.name }}
+        </a>
+    </div>
+{% empty %}
+    <p>No boards found.</p>
+{% endfor %}
+</div>
+
+<br>
+
+<h3>Pins</h3>
+<div class="pin-grid">
+{% for pin in pins %}
+    <div class="pin-card">
+        <a href="{% url 'pin_detail' pin.id %}">
+            <img src="{{ pin.image.url }}">
+        </a>
+        <p>{{ pin.title }}</p>
+    </div>
+{% empty %}
+    <p>No pins found.</p>
+{% endfor %}
+</div>
+
+<br>
+<a href="{% url 'home' %}">← Back</a>
+
+</body>
+</html>

@@ -18,5 +18,12 @@ urlpatterns = [
     path('pin/<int:pin_id>/like/', views.toggle_like, name='toggle_like'),
     path('comment/delete/<int:comment_id>/', views.delete_comment, name='delete_comment'),
     path('pin/<int:pin_id>/comment/', views.add_comment, name='add_comment'),
+    path("search/", views.search, name="search"),
+    path('profile/edit/', views.edit_profile, name='edit_profile'),
+    path("u/<str:username>/followers/", views.followers_list, name="followers_list"),
+    path("u/<str:username>/following/", views.following_list, name="following_list"),
+    path("board/<int:board_id>/follow/", views.toggle_board_follow, name="toggle_board_follow"),
+    path("board/<int:board_id>/followers/", views.board_followers, name="board_followers"),
+
 
 ]

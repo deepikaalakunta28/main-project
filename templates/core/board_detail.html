@@ -4,30 +4,65 @@
 <head>
     <title>{{ board.name }}</title>
     <link rel="stylesheet" href="{% static 'core/css/style.css' %}">
+    <script src="{% static 'core/js/board.js' %}"></script>
 </head>
+
 <body>
 
 <h1>{{ board.name }}</h1>
+<button onclick="copyBoardLink()">🔗 Share Board</button>
+<button onclick="shareBoard()">📲 Share via Device</button>
 
-<a href="{% url 'create_pin' board.id %}">➕ Add Pin</a>
+
+<p id="share-msg" style="color: green; display:none;">
+    ✔ Board link copied!
+</p>
+
+<p>By <strong>{{ board.user.username }}</strong></p>
+
+<!-- FOLLOW / UNFOLLOW BOARD -->
+{% if request.user.is_authenticated and board.user != request.user %}
+<form method="POST" action="{% url 'toggle_board_follow' board.id %}">
+    {% csrf_token %}
+    {% if is_following_board %}
+        <button type="submit">❌ Unfollow Board</button>
+    {% else %}
+        <button type="submit">➕ Follow Board</button>
+    {% endif %}
+</form>
+{% endif %}
+
+<br>
+
+<!-- FOLLOWERS COUNT (CLICKABLE) -->
+<a href="{% url 'board_followers' board.id %}">
+    {{ board.boardfollow_set.count }} followers
+</a>
+
 <br><br>
 
-<div class="pin-grid">
+<!-- ONLY OWNER CAN ADD PINS -->
+{% if request.user == board.user %}
+<a href="{% url 'create_pin' board.id %}">➕ Add Pin</a>
+{% endif %}
 
+<br><br>
+
+<!-- 🧩 PINTEREST MASONRY GRID -->
+<div class="masonry">
     {% for pin in pins %}
-    <div class="pin-card">
-
+    <div class="masonry-item">
         <a href="{% url 'pin_detail' pin.id %}">
             <img src="{{ pin.image.url }}">
         </a>
-
         <p>{{ pin.title }}</p>
     </div>
     {% empty %}
         <p>No pins yet.</p>
     {% endfor %}
-
 </div>
+
+<br>
 
 <a href="{% url 'home' %}">← Back to Boards</a>
 

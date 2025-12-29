@@ -9,6 +9,37 @@
 
 <h1>👤 My Profile</h1>
 
+{% if request.user.profile.profile_image %}
+    <img src="{{ request.user.profile.profile_image.url }}"
+         style="width:120px; height:120px; border-radius:50%; object-fit:cover;">
+{% else %}
+    <img src="{% static 'core/img/default-avatar.png' %}"
+         style="width:120px; height:120px; border-radius:50%; opacity:0.6;">
+{% endif %}
+
+
+<p><strong>{{ request.user.username }}</strong></p>
+
+{% if request.user.profile.bio %}
+<p>{{ request.user.profile.bio }}</p>
+{% endif %}
+<p>
+    <strong>
+        <a href="{% url 'followers_list' request.user.username %}">
+            {{ request.user.followers.count }} Followers
+        </a>
+        ·
+        <a href="{% url 'following_list' request.user.username %}">
+            {{ request.user.following.count }} Following
+        </a>
+    </strong>
+</p>
+
+<a href="{% url 'edit_profile' %}">✏️ Edit Profile</a>
+<br><br>
+
+
+
 <!-- My Boards -->
 <h2>My Boards</h2>
 

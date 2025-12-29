@@ -1,0 +1,40 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+<title>{{ board.name }} — Followers</title>
+<link rel="stylesheet" href="{% static 'core/css/style.css' %}">
+</head>
+
+<body>
+
+<h2>👥 Followers — {{ board.name }}</h2>
+
+{% if followers %}
+<ul>
+{% for f in followers %}
+<li>
+    {{ f.user.username }}
+
+    {% if f.user.profile.image %}
+        <img src="{{ f.user.profile.image.url }}"
+             style="width:35px;height:35px;border-radius:50%;object-fit:cover;">
+    {% endif %}
+
+    {% if f.user == request.user %}
+        <a href="{% url 'unfollow_board' board.id %}" style="color:red;">
+            ✖ Unfollow
+        </a>
+    {% endif %}
+</li>
+{% endfor %}
+</ul>
+{% else %}
+<p>No followers yet.</p>
+{% endif %}
+
+<br>
+<a href="{% url 'board_detail' board.id %}">← Back to Board</a>
+
+</body>
+</html>
