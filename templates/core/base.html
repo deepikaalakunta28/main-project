@@ -1,0 +1,45 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>{% block title %}Pinterest Clone{% endblock %}</title>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="{% static 'core/css/theme.css' %}">
+    <link rel="stylesheet" href="{% static 'core/css/sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'core/css/navbar.css' %}">
+
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+</head>
+
+<body>
+
+<header class="navbar">
+    <div class="nav-left">
+        <a class="logo" href="{% url 'home' %}">Pinterest</a>
+        <a class="nav-btn" href="{% url 'home' %}">Home</a>
+        <a class="nav-btn" href="{% url 'feed' %}">Explore</a>
+        <a class="nav-btn" href="{% url 'personal_feed' %}">Following</a>
+        <link rel="stylesheet" href="{% static 'core/css/style.css' %}">
+    </div>
+
+    <form action="{% url 'search' %}" method="get" class="search-box">
+        <input type="text" name="q" placeholder="Search pins or boards...">
+    </form>
+
+    <div class="nav-right">
+        <a class="nav-btn" href="{% url 'profile' %}">Profile</a>
+        <a class="nav-btn logout" href="{% url 'logout' %}">Logout</a>
+    </div>
+</header>
+
+<main class="page-content">
+    {% block content %}
+    {% endblock %}
+</main>
+
+</body>
+</html>

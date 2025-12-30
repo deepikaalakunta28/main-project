@@ -1,0 +1,79 @@
+/* ---------- Global Theme ---------- */
+
+:root {
+  /* 🎨 Pastel Color Palette */
+  --bg: #faf7ff;
+  --card: #ffffff;
+  --soft-pink: #ffd8e5;
+  --peach: #ffe6cc;
+  --mint: #dff7e8;
+  --sky: #e7f3ff;
+  --lavender: #ede5ff;
+  --text: #444;
+  --muted: #777;
+  --primary: #ff6f91;   /* soft coral pink */
+  --primary-dark: #e65c7c;
+
+  /* Borders + Radius */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+
+  /* Shadows */
+  --shadow-soft: 0 6px 18px rgba(0,0,0,.07);
+  --shadow-light: 0 2px 8px rgba(0,0,0,.05);
+
+  /* Layout */
+  --padding: 16px;
+  --gap: 14px;
+}
+
+/* ---------- Base UI ---------- */
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Inter", system-ui, sans-serif;
+  margin: 0;
+}
+
+.card {
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  padding: 14px;
+}
+
+button {
+  border-radius: var(--radius-md);
+  border: none;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+}
+
+.badge {
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+}
+
+/* Subtle pastel backgrounds for accent sections */
+.pastel-pink { background: var(--soft-pink); }
+.pastel-mint { background: var(--mint); }
+.pastel-sky { background: var(--sky); }
+.pastel-lavender { background: var(--lavender); }
+
+.page-content {
+    padding: 30px;
+    max-width: 1200px;
+    margin: auto;
+}

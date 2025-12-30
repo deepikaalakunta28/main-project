@@ -8,160 +8,107 @@
 
 <body>
 
-<h1>{{ pin.title }}</h1>
+<div class="pin-view-layout">
 
-<img src="{{ pin.image.url }}" style="width:350px; border-radius:10px;">
-<br>
+    <!-- LEFT (Image + Actions + Comments) -->
+    <div class="pin-left">
 
-<p>{{ pin.description }}</p>
+        <!-- ACTION BAR -->
+        <div class="pin-action-bar">
+            <a class="back-btn" href="{% url 'board_detail' pin.board.id %}">←</a>
 
+            <div class="action-icons">
+                ❤️ {{ like_count }}
+                💬 {{ comments.count }}
+                🔗
 
-<!-- LIKE SYSTEM -->
-<p><strong>Likes:</strong> {{ like_count }}</p>
+                {% if request.user.is_authenticated %}
+                <form method="POST" action="{% url 'save_pin' pin.id %}" class="save-inline">
+                    {% csrf_token %}
+                    <button class="save-top-btn">Save</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
 
-{% if liked_users %}
-<p>❤️ Liked by:
-    {% for u in liked_users %}
-        <span>{{ u }}</span>{% if not forloop.last %}, {% endif %}
-    {% endfor %}
-</p>
-{% else %}
-<p>No likes yet.</p>
-{% endif %}
+        <!-- PIN IMAGE -->
+        <div class="pin-image-container">
+            <img src="{{ pin.image.url }}">
+        </div>
 
-<form method="POST" action="{% url 'toggle_like' pin.id %}">
-    {% csrf_token %}
-    {% if is_liked %}
-        <button type="submit">💔 Unlike</button>
-    {% else %}
-        <button type="submit">❤️ Like</button>
-    {% endif %}
-</form>
+        <!-- PIN INFO -->
+        <div class="pin-meta">
+            <h2>{{ pin.title }}</h2>
 
-<br>
-<hr>
+            {% if pin.description %}
+            <p>{{ pin.description }}</p>
+            {% endif %}
 
+            <!-- LIKE SECTION -->
+            <div class="like-box">
+                <strong>Likes:</strong> {{ like_count }}<br>
 
-<!-- COMMENTS SECTION -->
-<h3>💬 Comments ({{ comments.count }})</h3>
+                <form method="POST" action="{% url 'toggle_like' pin.id %}">
+                    {% csrf_token %}
+                    {% if is_liked %}
+                        <button>💔 Unlike</button>
+                    {% else %}
+                        <button>❤️ Like</button>
+                    {% endif %}
+                </form>
+            </div>
 
-<form method="POST" action="{% url 'add_comment' pin.id %}">
-    {% csrf_token %}
-    <textarea name="comment_text" placeholder="Write a comment..." required></textarea><br>
-    <button type="submit">➕ Add Comment</button>
-</form>
-
-<br>
-
-{% for comment in comments %}
-<div style="margin-bottom:15px;">
-    <strong>{{ comment.user.username }}</strong>: {{ comment.text }}<br>
-    <small>{{ comment.created_at }}</small>
-
-    {% if comment.user == request.user %}
-        <a href="{% url 'delete_comment' comment.id %}" style="color:red;">
-            🗑 Delete
-        </a>
-    {% endif %}
-
-    <!-- REPLY FORM -->
-    <form method="POST" action="{% url 'add_comment' pin.id %}" style="margin-top:5px;">
-        {% csrf_token %}
-        <input type="hidden" name="parent_id" value="{{ comment.id }}">
-        <input type="text" name="comment_text" placeholder="Reply..." required>
-        <button type="submit">↩ Reply</button>
-    </form>
-
-    <!-- SHOW REPLIES -->
-    {% for reply in comment.replies.all %}
-        <div style="margin-left:30px; border-left:1px solid #ccc; padding-left:10px; margin-top:5px;">
-            <strong>{{ reply.user.username }}</strong>: {{ reply.text }}<br>
-            <small>{{ reply.created_at }}</small>
-
-            {% if reply.user == request.user %}
-                <a href="{% url 'delete_comment' reply.id %}" style="color:red;">
-                    🗑 Delete
-                </a>
+            {% if is_owner %}
+            <div class="owner-tools">
+                <a href="{% url 'edit_pin' pin.id %}">✏️ Edit</a> •
+                <a href="{% url 'delete_pin' pin.id %}" style="color:red;">🗑 Delete</a> •
+                <a href="{{ pin.image.url }}" download>⬇ Download</a>
+            </div>
             {% endif %}
         </div>
-    {% endfor %}
-</div>
-<hr>
-{% empty %}
-<p>No comments yet.</p>
-{% endfor %}
 
-<br><hr>
+        <!-- COMMENTS -->
+        <div class="comments-section">
+            <h3>Comments ({{ comments.count }})</h3>
 
+            <form method="POST" action="{% url 'add_comment' pin.id %}">
+                {% csrf_token %}
+                <input class="comment-input" name="comment_text"
+                       placeholder="Add a comment..." required>
+            </form>
 
-<!-- SAVE PIN TO BOARD -->
-{% if request.user.is_authenticated %}
-<form method="POST" action="{% url 'save_pin' pin.id %}">
-    {% csrf_token %}
+            {% for comment in comments %}
+            <div class="comment-card">
+                <b>{{ comment.user.username }}</b> — {{ comment.text }}
 
-    <label>Select Board:</label>
-    <select name="board_id" required>
-        {% for board in request.user.board_set.all %}
-            <option value="{{ board.id }}">{{ board.name }}</option>
-        {% empty %}
-            <option disabled>No boards found — create one</option>
-        {% endfor %}
-    </select>
+                {% if comment.user == request.user %}
+                    <a href="{% url 'delete_comment' comment.id %}" class="delete-link">🗑</a>
+                {% endif %}
+            </div>
+            {% empty %}
+            <p>No comments yet.</p>
+            {% endfor %}
+        </div>
 
-    <button type="submit">📌 Save Pin</button>
-</form>
-{% endif %}
+    </div>
 
-<br>
+    <!-- RIGHT (Related Pins) -->
+    <div class="pin-right">
+        <h3>More like this</h3>
 
-
-<!-- OWNER ACTIONS -->
-{% if is_owner %}
-<a href="{% url 'edit_pin' pin.id %}">✏️ Edit Pin</a>
-&nbsp;&nbsp;
-<a href="{% url 'delete_pin' pin.id %}" style="color:red;">🗑 Delete</a>
-{% endif %}
-
-&nbsp;&nbsp;
-<a href="{{ pin.image.url }}" download>⬇️ Download</a>
-
-<br><br>
-<h3>🔗 Share Pin</h3>
-
-<div class="share-box">
-
-    <button onclick="copyPinLink()">📋 Copy Link</button>
-
-    <button onclick="shareWhatsApp()">🟢 WhatsApp</button>
-
-    <button onclick="shareTelegram()">📨 Telegram</button>
-
-    <button onclick="shareTwitter()">🐦 Twitter</button>
-
-    <button onclick="shareEmail()">✉ Email</button>
+        <div class="masonry">
+            {% for r in related_pins %}
+            <div class="masonry-item">
+                <a href="{% url 'pin_detail' r.id %}">
+                    <img src="{{ r.image.url }}">
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
 
 </div>
 
-<p id="copy-msg" style="color: green; display:none;">
-    ✔ Link copied!
-</p>
-
-
-<!-- COPY LINK BUTTON -->
-<button onclick="copyPinLink()">🔗 Copy Link</button>
-
-<p id="copy-msg" style="color: green; display:none;">
-    ✔ Link copied!
-</p>
-
-<br>
-
-
-<!-- BACK -->
-<a href="{% url 'board_detail' pin.board.id %}">← Back to Board</a>
-
-
-<!-- LOAD EXTERNAL JS -->
 <script src="{% static 'core/js/pin.js' %}"></script>
 
 </body>

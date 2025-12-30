@@ -1,29 +1,12 @@
-{% load static %}
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Explore Feed</title>
-    <link rel="stylesheet" href="{% static 'core/css/style.css' %}">
-</head>
-<body>
+{% extends "core/base.html" %}
+{% block content %}
 
-<h1>🧭 Explore Feed</h1>
+<h1>Explore Feed</h1>
 
-<!-- Masonry Layout -->
-<div class="masonry">
-    {% for pin in pins %}
-    <div class="masonry-item">
-        <a href="{% url 'pin_detail' pin.id %}">
-            <img src="{{ pin.image.url }}">
-        </a>
-        <p>{{ pin.title }}</p>
-    </div>
-    {% empty %}
-        <p>No pins available</p>
-    {% endfor %}
+<div id="pin-container" class="masonry">
+    {% include "core/pin_items.html" with pins=pins %}
 </div>
 
-<br>
-<a href="{% url 'home' %}">← Back to Boards</a>
-</body>
-</html>
+<div id="load-trigger"></div>
+
+{% endblock %}

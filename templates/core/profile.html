@@ -1,99 +1,22 @@
-{% load static %}
-<!DOCTYPE html>
-<html>
-<head>
-    <title>My Profile</title>
-    <link rel="stylesheet" href="{% static 'core/css/style.css' %}">
-</head>
-<body>
+{% extends "core/base.html" %}
+{% block content %}
 
-<h1>👤 My Profile</h1>
+<h1>My Profile</h1>
 
-{% if request.user.profile.profile_image %}
-    <img src="{{ request.user.profile.profile_image.url }}"
-         style="width:120px; height:120px; border-radius:50%; object-fit:cover;">
-{% else %}
-    <img src="{% static 'core/img/default-avatar.png' %}"
-         style="width:120px; height:120px; border-radius:50%; opacity:0.6;">
-{% endif %}
-
-
-<p><strong>{{ request.user.username }}</strong></p>
-
-{% if request.user.profile.bio %}
-<p>{{ request.user.profile.bio }}</p>
-{% endif %}
-<p>
-    <strong>
-        <a href="{% url 'followers_list' request.user.username %}">
-            {{ request.user.followers.count }} Followers
-        </a>
-        ·
-        <a href="{% url 'following_list' request.user.username %}">
-            {{ request.user.following.count }} Following
-        </a>
-    </strong>
-</p>
-
-<a href="{% url 'edit_profile' %}">✏️ Edit Profile</a>
-<br><br>
-
-
-
-<!-- My Boards -->
 <h2>My Boards</h2>
-
 <div class="board-grid">
     {% for board in boards %}
-    <div class="board-card">
-        <a href="{% url 'board_detail' board.id %}">
+        <a class="board-card" href="{% url 'board_detail' board.id %}">
             {{ board.name }}
         </a>
-    </div>
     {% empty %}
         <p>No boards yet.</p>
     {% endfor %}
 </div>
 
-<br>
-
-<!-- My Pins -->
 <h2>My Pins</h2>
-
-<div class="pin-grid">
-    {% for pin in pins %}
-    <div class="pin-card">
-        <a href="{% url 'pin_detail' pin.id %}">
-            <img src="{{ pin.image.url }}">
-        </a>
-        <p>{{ pin.title }}</p>
-    </div>
-    {% empty %}
-        <p>No pins yet.</p>
-    {% endfor %}
+<div class="masonry">
+    {% include "core/pin_items.html" with pins=pins %}
 </div>
 
-<br>
-
-<!-- Saved Pins -->
-<h2>📌 Saved Pins</h2>
-
-<div class="pin-grid">
-{% for saved in saved_pins %}
-    <div class="pin-card">
-        <a href="{% url 'pin_detail' saved.pin.id %}">
-            <img src="{{ saved.pin.image.url }}">
-        </a>
-        <p>{{ saved.pin.title }}</p>
-    </div>
-{% empty %}
-<p>No saved pins yet.</p>
-{% endfor %}
-</div>
-
-<br>
-
-<a href="{% url 'home' %}">← Back to Boards</a>
-
-</body>
-</html>
+{% endblock %}

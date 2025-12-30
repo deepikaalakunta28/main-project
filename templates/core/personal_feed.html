@@ -1,16 +1,12 @@
-<h1>🏠 Home Feed</h1>
+{% extends "core/base.html" %}
+{% block content %}
 
-<div class="pin-grid">
-    {% for pin in pins %}
-    <div class="pin-card">
-        <a href="{% url 'pin_detail' pin.id %}">
-            <img src="{{ pin.image.url }}">
-        </a>
-        <p>{{ pin.title }}</p>
-    </div>
-    {% empty %}
-        <p>No pins yet — follow some users.</p>
-    {% endfor %}
+<h1>Following Feed</h1>
+
+<div id="pin-container" class="masonry">
+    {% include "core/pin_items.html" with pins=pins %}
 </div>
 
-<a href="{% url 'home' %}">← Back</a>
+<div id="load-trigger" data-mode="home"></div>
+
+{% endblock %}

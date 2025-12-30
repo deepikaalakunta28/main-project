@@ -24,6 +24,4 @@ urlpatterns = [
     path("u/<str:username>/following/", views.following_list, name="following_list"),
     path("board/<int:board_id>/follow/", views.toggle_board_follow, name="toggle_board_follow"),
     path("board/<int:board_id>/followers/", views.board_followers, name="board_followers"),
-
-
 ]

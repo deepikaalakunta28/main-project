@@ -1,44 +1,17 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
+{% extends "core/base.html" %}
+{% block content %}
 
-<head>
-    <meta charset="UTF-8">
-    <title>Pinterest Clone</title>
-    <link rel="stylesheet" href="{% static 'core/css/style.css' %}">
-</head>
+<h1>Boards</h1>
 
-<body>
-    <h1>Boards</h1>
-    <form method="GET" action="{% url 'search' %}">
-    <input type="text" name="q" placeholder="Search pins or boards..." required>
-    <button type="submit">🔎 Search</button>
-</form>
+<div class="board-grid">
+    {% for board in boards %}
+        <a class="board-card" href="{% url 'board_detail' board.id %}">
+            {{ board.name }}
+        </a>
+    {% empty %}
+        <p>No boards yet.</p>
+    {% endfor %}
+</div>
 
-<br>
+{% endblock %}
 
-    <a href="{% url 'logout' %}">🚪 Logout</a>
-    <br><br>
-    <a href="{% url 'profile' %}">👤 My Profile</a>
-    <br><br>
-    <a href="{% url 'feed' %}">🧭 Explore Feed</a>
-    <br><br>
-    <a href="{% url 'personal_feed' %}">🏠 Home Feed (Following)</a>
-    <br><br>
-    <a href="{% url 'create_board' %}">➕ Create Board</a>
-    <br><br>
-    <div class="board-grid">
-        {% for board in boards %}
-        <div class="board-card">
-            <a href="{% url 'board_detail' board.id %}">
-                {{ board.name }}
-            </a>
-        </div>
-        {% endfor %}
-    </div>
-
-
-    <script src="{% static 'core/js/main.js' %}"></script>
-</body>
-
-</html>

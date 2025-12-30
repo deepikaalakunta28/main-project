@@ -1,19 +1,58 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    {% for pin in pins %}
+{% load static %}
+
+{% for pin in pins %}
 <div class="masonry-item">
+
     <a href="{% url 'pin_detail' pin.id %}">
         <img src="{{ pin.image.url }}">
     </a>
+
+    {% if request.user.is_authenticated %}
+    <div class="pin-actions">
+        <button class="save-btn" onclick="openSavePopup({{ pin.id }})">
+            Save
+        </button>
+    </div>
+    {% endif %}
+
     <p>{{ pin.title }}</p>
 </div>
 {% endfor %}
 
-</body>
-</html>
+
+<!-- ================= SAVE PIN MODAL ================= -->
+
+<div id="saveModal" class="save-modal">
+    <div class="save-box">
+
+        <h3>Select Board</h3>
+
+        <form id="saveForm" method="post">
+            {% csrf_token %}
+
+            <select name="board_id" required>
+                {% for board in request.user.board_set.all %}
+                    <option value="{{ board.id }}">{{ board.name }}</option>
+                {% empty %}
+                    <option disabled>No boards yet — create one first</option>
+                {% endfor %}
+            </select>
+
+            <br><br>
+            <button type="submit">📌 Save</button>
+            <button type="button" onclick="closeSavePopup()">Cancel</button>
+        </form>
+
+    </div>
+</div>
+
+
+<script>
+function openSavePopup(pinId) {
+    document.getElementById("saveForm").action = `/pin/${pinId}/save/`;
+    document.getElementById("saveModal").style.display = "flex";
+}
+function closeSavePopup() {
+    document.getElementById("saveModal").style.display = "none";
+}
+</script>
